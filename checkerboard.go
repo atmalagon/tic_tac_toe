@@ -2,6 +2,7 @@ package main
 
 import (
 "math/rand"
+"time"
 "bufio"
 "os"
 "fmt"
@@ -68,7 +69,9 @@ func set_board(board [][]int, id int, val int) [][]int {
 }
 
 func ai_move(board [][]int, index int) [][]int{
-     board = set_board(board, index, 2)
+     time.Sleep(time.Second * 1)
+     fmt.Println("AI move")
+     board = set_board(board, index, -1)
      return board
 }
 
@@ -84,8 +87,8 @@ func main() {
 	     break
 	 }
 	 print_board(board)
-	 fmt.Println("AI move")
 	 ai_move(board, rand.Intn(8))
+	 print_board(board)
 	 if check_board(board) == 1 {
 	    break
 	 }	     
