@@ -68,6 +68,12 @@ func set_board(board [][]int, id int, val int) [][]int {
      return board
 }
 
+func get_board_entry(board [][]int, id int) int {
+     level := id / 3
+     col := id - 3*level
+     return board[level][col]
+}
+
 func ai_move(board [][]int, index int) [][]int{
      time.Sleep(time.Second * 1)
      fmt.Println("AI move")
@@ -87,7 +93,11 @@ func main() {
 	     break
 	 }
 	 print_board(board)
-	 ai_move(board, rand.Intn(8))
+	 ai_num := rand.Intn(8)
+	 for get_board_entry(board, ai_num) != 0 {
+	     ai_num = rand.Intn(8)
+	 }
+	 ai_move(board, ai_num)
 	 print_board(board)
 	 if check_board(board) == 1 {
 	    break
