@@ -68,10 +68,66 @@ func set_board(board [][]int, id int, val int) [][]int {
      return board
 }
 
+func set_mirror(board [][]int, id int) [][]int {
+     level := id / 3
+     col := id - 3*level
+     //increment all vals in the row/col/diagonal where an
+     //an entry was just played
+     //need to not just increment but need to keep
+     //track of how many in that line are filled
+     for i := 0; i < 3; i++ {
+     	 board[level][i] += 1
+	 if i != level {
+	    board[i][col] += 1
+	    }
+	 }
+     if id % 2 == 0 {
+     	//fill in diagonal
+     	if level == col {
+	   for i := 0; i < 3; i++ {
+	       if i != level {
+	       	  board[i][i] +=1
+	       	  }
+	       }
+	       }
+	if level != col {
+	   for i:= 0; i < 3; i++ {
+	    if i != level {
+	       board[i][2 - i] += 1
+	    }
+	   }
+	   }
+	   }
+     return board
+}
+
+
 func get_board_entry(board [][]int, id int) int {
      level := id / 3
      col := id - 3*level
      return board[level][col]
+}
+
+func ai_choose(board [][]int, mirror [][]int) int {
+     //find lines with sum 2
+     //find entries w/ board value == 0 (no one's played there yet)
+     max_i := 0
+     max_j := 0
+     max_value := 0
+     for i := range board {
+     	 row := board[i]
+     	 for j := range row {
+	     if row[j] == 1 {
+	     	continue
+	     }
+	     if  max_value < mirror[i][j] {
+	     	 max_value = mirror[i][j]
+		 max_i = i
+		 max_j = j
+		 }
+	 }
+     }
+     return 3 * max_i + max_j
 }
 
 func ai_move(board [][]int, index int) [][]int{
@@ -83,17 +139,22 @@ func ai_move(board [][]int, index int) [][]int{
 
 func main() {
      board := [][]int{{0,0,0}, {0,0,0}, {0,0,0}}
+     mirror := [][]int{{0,0,0}, {0,0,0}, {0,0,0}}
      for {
      	 fmt.Print("Enter position (0-8): ")
      	 scanner := bufio.NewScanner(os.Stdin)
      	 for scanner.Scan() {
              lineStr := scanner.Text()
     	     num, _ := strconv.Atoi(lineStr)
+	     mirror = set_mirror(mirror, num)
+	     fmt.Println("Mirror")
+	     print_board(mirror)
 	     board = set_board(board, num, 1)
 	     break
 	 }
+	 fmt.Println("Board")
 	 print_board(board)
-	 ai_num := rand.Intn(8)
+	 ai_num := ai_choose(board, mirror)
 	 for get_board_entry(board, ai_num) != 0 {
 	     ai_num = rand.Intn(8)
 	 }
