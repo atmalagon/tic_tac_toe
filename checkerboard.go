@@ -119,7 +119,7 @@ func minimax(board [][]int, player int) (move, score int) {
 		for i := 1; i < len(scores); i++ {
 			if scores[i] > max_score {
 				max_score = scores[i]
-				best_move = best_move
+				best_move = open_positions[i]
 			}
 		}
 		return best_move, max_score
@@ -129,7 +129,7 @@ func minimax(board [][]int, player int) (move, score int) {
 		for i := 1; i < len(scores); i++ {
 			if scores[i] < min_score {
 				min_score = scores[i]
-				best_move = best_move
+				best_move = open_positions[i]
 			}
 		}
 		return best_move, min_score
