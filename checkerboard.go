@@ -2,6 +2,7 @@ package main
 
 import (
 "math/rand"
+"math/Abs"
 "time"
 "bufio"
 "os"
@@ -22,34 +23,29 @@ func calculate_sum(line []int) int {
      for _, h := range line {
      	 sum += h
      }
-     if sum == 3 {
-     	fmt.Println("Tic Tac Toe!")
-	return 1
-     }
-     return 0
 }
 
-func check_board(board [][]int) int {
+func score(board [][]int) int {
      //check rows and columns
      for i := 0; i < 3; i++ {
      	 col := boardColumn(board, i)
-	 if (calculate_sum(col) == 1) {
-	    return 1
+	 col_sum := calculate_sum(col)
+	 row_sum := calculate_sum(board[i])
+	 if Abs(col_sum) == 3 {
+	    return col_sum
 	 }
-	 if (calculate_sum(board[i]) == 1) {
-     	    return 1
+	 if Abs(board_sum) == 3 {
+     	    return board_sum
      	 }
      }
      //check diagonals
      left := board[0][0] + board[1][1] + board[2][2]
      right := board[0][2] + board[1][1] + board[2][0]
-     if (left == 3) {
-     	fmt.Println("Tic Tac Toe!")
-     	return 1
+     if Abs(left) == 3 {
+     	return left
      }
-     if  (right == 3) {
-     	fmt.Println("Tic Tac Toe!")
-     	return 1
+     if Abs(right) == 3 {
+     	return right
      }
      return 0
 }
@@ -67,67 +63,35 @@ func set_board(board [][]int, id int, val int) [][]int {
      board[level][col] = val
      return board
 }
-
-func set_mirror(board [][]int, id int) [][]int {
-     level := id / 3
-     col := id - 3*level
-     //increment all vals in the row/col/diagonal where an
-     //an entry was just played
-     //need to not just increment but need to keep
-     //track of how many in that line are filled
-     for i := 0; i < 3; i++ {
-     	 board[level][i] += 1
-	 if i != level {
-	    board[i][col] += 1
-	    }
-	 }
-     if id % 2 == 0 {
-     	//fill in diagonal
-     	if level == col {
-	   for i := 0; i < 3; i++ {
-	       if i != level {
-	       	  board[i][i] +=1
-	       	  }
-	       }
-	       }
-	if level != col {
-	   for i:= 0; i < 3; i++ {
-	    if i != level {
-	       board[i][2 - i] += 1
-	    }
-	   }
-	   }
-	   }
-     return board
-}
-
-
+ 
 func get_board_entry(board [][]int, id int) int {
      level := id / 3
      col := id - 3*level
      return board[level][col]
 }
 
-func ai_choose(board [][]int, mirror [][]int) int {
-     //find lines with sum 2
-     //find entries w/ board value == 0 (no one's played there yet)
-     max_i := 0
-     max_j := 0
-     max_value := 0
-     for i := range board {
-     	 row := board[i]
-     	 for j := range row {
-	     if row[j] == 1 {
-	     	continue
-	     }
-	     if  max_value < mirror[i][j] {
-	     	 max_value = mirror[i][j]
-		 max_i = i
-		 max_j = j
-		 }
-	 }
+func possible_moves(board) int {
+     //return list of open positions
+}
+
+func minimax(board [][]int) int {
+     // if game is over, return score
+     score := score(board)
+     if Abs(score) == 3 {
+     	return score(board)  
      }
-     return 3 * max_i + max_j
+     //otherwise get list of new game states
+     open_positions := possible_moves(board)
+     scores = make([]int, 0)    
+     for i := 0; i<len(open_positions); i++ {
+     	 state := copy(board)
+     	 state = set_board_entry(board, i)
+     	 state_score = minimax(state)
+	 scores = scores.append(scores, state_score)
+
+     }
+
+
 }
 
 func ai_move(board [][]int, index int) [][]int{
@@ -140,12 +104,14 @@ func ai_move(board [][]int, index int) [][]int{
 func main() {
      board := [][]int{{0,0,0}, {0,0,0}, {0,0,0}}
      mirror := [][]int{{0,0,0}, {0,0,0}, {0,0,0}}
+     moves := make([]int, 0)
      for {
      	 fmt.Print("Enter position (0-8): ")
      	 scanner := bufio.NewScanner(os.Stdin)
      	 for scanner.Scan() {
              lineStr := scanner.Text()
     	     num, _ := strconv.Atoi(lineStr)
+	     moves = append(open_positions, num)
 	     mirror = set_mirror(mirror, num)
 	     fmt.Println("Mirror")
 	     print_board(mirror)
